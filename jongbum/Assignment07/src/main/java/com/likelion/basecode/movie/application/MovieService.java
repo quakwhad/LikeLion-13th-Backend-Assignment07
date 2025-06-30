@@ -27,23 +27,24 @@ public class MovieService {
     private final MovieSearchClient movieSearchClient;
 
     // 일별 박스오피스 전체 영화 목록 조회 (장르 정보 포함)
-    public MovieListResponseDto fetchAllDailyBoxOfficeMoviesWithGenres() { // 새로운 함수명
+    public MovieListResponseDto fetchAllDailyBoxOfficeMoviesWithGenres() {
         String targetDate = LocalDate.now().minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
-        // 1. 일별 박스오피스 기본 목록 조회 (movieCd 포함)
+        // 일별 박스오피스 기본 목록 조회 (movieCd 포함)
         List<MovieResponseDto> moviesWithoutGenres = movieSearchClient.fetchDailyBoxOffice(targetDate);
 
-        // 2. 각 영화에 대해 상세 정보 API 호출하여 장르 정보 보강
+        // 각 영화에 대해 상세 정보 API 호출하여 장르 정보 보강
         List<MovieResponseDto> moviesWithGenres = moviesWithoutGenres.stream()
                 .map(movie -> {
-                    // movieCd가 없으면 장르를 가져올 수 없음 (이런 경우 발생하면 에러 처리 또는 스킵)
+                    // movieCd가 없으면 장르를 가져올 수 없기 때문에
+                    // 이런 경우 발생하면 에러 처리 또는 스킵
                     if (movie.movieCd() == null || movie.movieCd().isEmpty()) {
                         System.err.println("MovieCd not found for movie: " + movie.movieNm());
                         return movie; // movieCd가 없으면 장르 없이 기존 DTO 반환
                     }
                     try {
                         MovieInfoResponseDto movieDetail = movieSearchClient.fetchMovieDetail(movie.movieCd());
-                        // 새로운 MovieResponseDto 생성 (record는 불변이므로)
+                        // 새로운 MovieResponseDto 생성
                         return new MovieResponseDto(
                                 movie.movieCd(),
                                 movie.movieNm(),

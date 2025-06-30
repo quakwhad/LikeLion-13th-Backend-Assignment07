@@ -25,8 +25,7 @@ public class MovieSearchClient {
 
     private final RestTemplate restTemplate;
 
-    // ObjectMapper는 JSON 직렬화/역직렬화에 사용됩니다.
-    // 여기서는 응답 Map을 예쁘게 출력하기 위해 사용합니다.
+    // ObjectMapper는 JSON 직렬화/역직렬화에 사용
     private final ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
 
@@ -52,20 +51,13 @@ public class MovieSearchClient {
                 .build()
                 .toUri();
 
-        System.out.println("KOBIS API 요청 URI: " + uri); // 디버깅을 위한 URI 출력
-
         // 외부 API 호출
         ResponseEntity<Map> response = restTemplate.getForEntity(uri, Map.class);
 
-        // --- 여기에 원본 JSON 응답 로깅 코드 추가 ---
         if (response.getBody() != null) {
             try {
-                // response.getBody()는 이미 Map 형태로 파싱된 상태입니다.
-                // 이를 다시 JSON 문자열로 변환하여 예쁘게 출력합니다.
                 String originalJsonResponse = objectMapper.writeValueAsString(response.getBody());
-                System.out.println("--- KOBIS API Original JSON Response ---");
                 System.out.println(originalJsonResponse);
-                System.out.println("----------------------------------------");
             } catch (Exception e) {
                 System.err.println("Failed to print original JSON response: " + e.getMessage());
             }

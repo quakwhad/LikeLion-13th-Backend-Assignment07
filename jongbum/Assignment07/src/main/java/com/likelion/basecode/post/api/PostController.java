@@ -51,4 +51,12 @@ public class PostController {
         postService.postDelete(postId);
         return ApiResTemplate.successWithNoContent(SuccessCode.POST_DELETE_SUCCESS);
     }
+
+    @PatchMapping("/{postId}/image") // 새로운 엔드포인트 정의
+    public ApiResTemplate<PostInfoResponseDto> removePostImage(@PathVariable("postId") Long postId,
+                                                               @RequestPart("post") PostUpdateRequestDto postUpdateRequestDto,
+                                                               @RequestPart(value = "image", required = false) MultipartFile imageFile) {
+        PostInfoResponseDto postInfoResponseDto = postService.removePostImage(postId, postUpdateRequestDto, imageFile);
+        return ApiResTemplate.successResponse(SuccessCode.POST_UPDATE_SUCCESS, postInfoResponseDto);
+    }
 }
